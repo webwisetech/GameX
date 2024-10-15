@@ -324,23 +324,9 @@ void* LuaSTD::getVar( const std::string &varname) {
     lua_pop(L, 1);
     throw std::runtime_error("Type error: expected userdata");
 }
-std::string LuaSTD::readFile(const std::string& filename){
-    std::fstream input(filename, std::ios::in);
-    
-    if (!input.is_open()) {
-        std::cerr << "Error: Could not open file: " << filename << std::endl;
-        return "";
-    }
-
-    std::stringstream ss;
-    ss << input.rdbuf();
-    std::string str = ss.str();
-    
-    return str;
-}
 
 int LuaSTD::preload(const std::string& filename) {
-    std::string str = readFile(filename);
+    std::string str = utils.readFile(filename);
 
     preloaded.push_back(std::move(str));
 
@@ -352,14 +338,9 @@ void LuaSTD::run(int preloadedID){
     std::string preloadedFile = preloaded[preloadedID];
     int result = luaL_dostring(L, preloadedFile.c_str());
     
-    // Check for errors
     if (result != LUA_OK) {
-        // Retrieve the error message from the top of the stack
         const char* errorMessage = lua_tostring(L, -1);
-        // Log or print the error message
-        std::cerr << "Lua Error: " << errorMessage << std::endl;
-        // Pop the error message from the stack
-        lua_pop(L, 1);
+        utils.DisplayErrorMessageBox(errorMessage);
     }
 
     return;

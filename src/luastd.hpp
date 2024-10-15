@@ -1,5 +1,6 @@
 #pragma once
 
+#include "util.hpp"
 #include <lua.hpp>
 #include <raylib.h>
 #include <string>
@@ -8,7 +9,7 @@
 
 class LuaSTD {
     public:
-        std::string readFile(const std::string& filename);
+        Util utils;
         std::vector<std::string> preloaded{};
         lua_State* L;
         void initialize();
